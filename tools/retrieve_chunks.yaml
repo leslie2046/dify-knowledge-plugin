@@ -1,0 +1,233 @@
+identity:
+  name: retrieve_chunks
+  author: leslie2046
+  label:
+    en_US: Retrieve Chunks
+    zh_Hans: 检索分段
+description:
+  human:
+    en_US: Search a Dify knowledge base and return the most relevant chunks.
+    zh_Hans: 检索 Dify 知识库并返回最相关的分段。
+  llm: Search a Dify knowledge base and return the most relevant chunks.
+parameters:
+  - name: query
+    type: string
+    required: true
+    form: llm
+    label:
+      en_US: Query
+      zh_Hans: 检索问题
+    human_description:
+      en_US: Search query text.
+      zh_Hans: 检索问题或关键词。
+    llm_description: The search query text used to retrieve chunks from the Dify knowledge base.
+  - name: dataset_id
+    type: string
+    required: true
+    form: form
+    label:
+      en_US: Dataset ID
+      zh_Hans: 知识库 ID
+    human_description:
+      en_US: Knowledge base id used for retrieval.
+      zh_Hans: 用于检索的知识库 ID。
+    llm_description: Required Dify knowledge base id used for retrieval.
+  - name: search_method
+    type: select
+    required: false
+    form: form
+    label:
+      en_US: Search Method
+      zh_Hans: 检索方式
+    human_description:
+      en_US: Optional override for internal knowledge bases.
+      zh_Hans: 可选，仅用于内部知识库的检索方式覆盖。
+    llm_description: Optional search method override for internal knowledge bases.
+    options:
+      - value: keyword_search
+        label:
+          en_US: Keyword Search
+          zh_Hans: 关键词检索
+      - value: semantic_search
+        label:
+          en_US: Semantic Search
+          zh_Hans: 语义检索
+      - value: full_text_search
+        label:
+          en_US: Full Text Search
+          zh_Hans: 全文检索
+      - value: hybrid_search
+        label:
+          en_US: Hybrid Search
+          zh_Hans: 混合检索
+  - name: top_k
+    type: number
+    required: false
+    form: form
+    label:
+      en_US: Top K
+      zh_Hans: 返回数量
+    human_description:
+      en_US: Optional maximum number of chunks to return.
+      zh_Hans: 可选，返回的最大分段数量。
+    llm_description: Optional maximum number of chunks to return.
+    min: 1
+    max: 50
+  - name: score_threshold_enabled
+    type: boolean
+    required: false
+    form: form
+    label:
+      en_US: Enable Score Threshold
+      zh_Hans: 启用相似度阈值
+    human_description:
+      en_US: Optional score threshold toggle.
+      zh_Hans: 可选，是否启用相似度阈值过滤。
+    llm_description: Optional score threshold toggle.
+  - name: score_threshold
+    type: number
+    required: false
+    form: form
+    label:
+      en_US: Score Threshold
+      zh_Hans: 相似度阈值
+    human_description:
+      en_US: Optional minimum similarity score.
+      zh_Hans: 可选，最小相似度阈值。
+    llm_description: Optional minimum similarity score.
+    min: 0
+    max: 1
+  - name: reranking_enable
+    type: boolean
+    required: false
+    form: form
+    label:
+      en_US: Enable Reranking
+      zh_Hans: 启用重排
+    human_description:
+      en_US: Optional reranking toggle for internal knowledge bases.
+      zh_Hans: 可选，仅内部知识库生效，是否启用重排。
+    llm_description: Optional reranking toggle for internal knowledge bases.
+  - name: reranking_mode
+    type: select
+    required: false
+    form: form
+    label:
+      en_US: Reranking Mode
+      zh_Hans: 重排模式
+    human_description:
+      en_US: Optional reranking mode for internal knowledge bases.
+      zh_Hans: 可选，仅内部知识库生效，重排模式。
+    llm_description: Optional reranking mode for internal knowledge bases.
+    options:
+      - value: weighted_score
+        label:
+          en_US: Weighted Score
+          zh_Hans: 加权分数
+      - value: reranking_model
+        label:
+          en_US: Reranking Model
+          zh_Hans: 重排模型
+  - name: reranking_provider_name
+    type: string
+    required: false
+    form: form
+    label:
+      en_US: Reranking Provider
+      zh_Hans: 重排模型 Provider
+    human_description:
+      en_US: Required when reranking mode is reranking_model.
+      zh_Hans: 当重排模式为 reranking_model 时必填。
+    llm_description: Reranking model provider name, required when reranking mode is reranking_model.
+  - name: reranking_model_name
+    type: string
+    required: false
+    form: form
+    label:
+      en_US: Reranking Model
+      zh_Hans: 重排模型名称
+    human_description:
+      en_US: Required when reranking mode is reranking_model.
+      zh_Hans: 当重排模式为 reranking_model 时必填。
+    llm_description: Reranking model name, required when reranking mode is reranking_model.
+  - name: weight_type
+    type: select
+    required: false
+    form: form
+    label:
+      en_US: Weight Type
+      zh_Hans: 权重策略
+    human_description:
+      en_US: Optional hybrid-search weight strategy.
+      zh_Hans: 可选，Hybrid Search 的权重策略。
+    llm_description: Optional hybrid-search weight strategy.
+    options:
+      - value: semantic_first
+        label:
+          en_US: Semantic First
+          zh_Hans: 语义优先
+      - value: keyword_first
+        label:
+          en_US: Keyword First
+          zh_Hans: 关键词优先
+      - value: customized
+        label:
+          en_US: Customized
+          zh_Hans: 自定义
+  - name: vector_weight
+    type: number
+    required: false
+    form: form
+    label:
+      en_US: Vector Weight
+      zh_Hans: 向量权重
+    human_description:
+      en_US: Optional semantic-search weight for hybrid search.
+      zh_Hans: 可选，Hybrid Search 中语义检索的权重。
+    llm_description: Optional semantic-search weight for hybrid search.
+    min: 0
+    max: 1
+  - name: keyword_weight
+    type: number
+    required: false
+    form: form
+    label:
+      en_US: Keyword Weight
+      zh_Hans: 关键词权重
+    human_description:
+      en_US: Optional keyword-search weight for hybrid search.
+      zh_Hans: 可选，Hybrid Search 中关键词检索的权重。
+    llm_description: Optional keyword-search weight for hybrid search.
+    min: 0
+    max: 1
+  - name: attachment_ids
+    type: string
+    required: false
+    form: form
+    label:
+      en_US: Attachment IDs
+      zh_Hans: 附件 IDs
+    human_description:
+      en_US: Optional attachment ids, separated by commas or provided as a JSON array string.
+      zh_Hans: 可选，附件 ID 列表，支持逗号分隔字符串或 JSON 数组字符串。
+    llm_description: Optional attachment ids, separated by commas or provided as a JSON array string.
+output_schema:
+  type: object
+  properties:
+    query:
+      type: string
+      description: Original query text.
+    dataset_id:
+      type: string
+      description: Knowledge base id used for retrieval.
+    count:
+      type: integer
+      description: Number of matched records.
+    result:
+      type: array
+      description: Normalized retrieval records.
+      items:
+        type: object
+extra:
+  python:
+    source: tools/retrieve_chunks.py

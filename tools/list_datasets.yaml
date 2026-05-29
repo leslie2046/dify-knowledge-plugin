@@ -1,0 +1,98 @@
+identity:
+  name: list_datasets
+  author: leslie2046
+  label:
+    en_US: List Knowledge Bases
+    zh_Hans: 获取知识库列表
+description:
+  human:
+    en_US: List Dify knowledge bases and optionally filter them by keyword or tags.
+    zh_Hans: 获取 Dify 知识库列表，可按关键词或标签筛选。
+  llm: List Dify knowledge bases and optionally filter them by keyword or tags.
+parameters:
+  - name: keyword
+    type: string
+    required: false
+    form: llm
+    label:
+      en_US: Keyword
+      zh_Hans: 关键词
+    human_description:
+      en_US: Optional keyword used to filter knowledge base names.
+      zh_Hans: 可选，用于按知识库名称筛选的关键词。
+    llm_description: Optional keyword used to filter knowledge base names.
+  - name: page
+    type: number
+    required: false
+    form: form
+    default: 1
+    label:
+      en_US: Page
+      zh_Hans: 页码
+    human_description:
+      en_US: Page number to retrieve.
+      zh_Hans: 要获取的页码。
+    llm_description: Optional page number for pagination.
+    min: 1
+  - name: limit
+    type: number
+    required: false
+    form: form
+    default: 20
+    label:
+      en_US: Limit
+      zh_Hans: 每页数量
+    human_description:
+      en_US: Number of knowledge bases to return per page.
+      zh_Hans: 每页返回的知识库数量。
+    llm_description: Optional number of knowledge bases to return per page.
+    min: 1
+    max: 100
+  - name: include_all
+    type: boolean
+    required: false
+    form: form
+    label:
+      en_US: Include All
+      zh_Hans: 包含全部
+    human_description:
+      en_US: Whether to include all knowledge bases regardless of permissions.
+      zh_Hans: 是否忽略权限范围并包含全部知识库。
+    llm_description: Optional flag to include all knowledge bases regardless of permissions.
+  - name: tag_ids
+    type: string
+    required: false
+    form: form
+    label:
+      en_US: Tag IDs
+      zh_Hans: 标签 IDs
+    human_description:
+      en_US: Optional tag ids, separated by commas or provided as a JSON array string.
+      zh_Hans: 可选，标签 ID 列表，支持逗号分隔字符串或 JSON 数组字符串。
+    llm_description: Optional tag ids, separated by commas or provided as a JSON array string.
+output_schema:
+  type: object
+  properties:
+    page:
+      type: integer
+      description: Current page number.
+    limit:
+      type: integer
+      description: Number of items per page.
+    total:
+      type: integer
+      description: Total number of matching knowledge bases.
+    has_more:
+      type: boolean
+      description: Whether more pages exist.
+    count:
+      type: integer
+      description: Number of returned knowledge bases in the current page.
+    result:
+      type: array
+      description: Normalized knowledge base records.
+      items:
+        type: object
+extra:
+  python:
+    source: tools/list_datasets.py
