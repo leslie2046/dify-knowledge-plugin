@@ -1,5 +1,6 @@
 import unittest
 
+from provider.dify_knowledge_api import DifyKnowledgeClient
 from provider.dify_knowledge_utils import (
     build_list_documents_params,
     build_list_datasets_params,
@@ -56,50 +57,32 @@ class DifyKnowledgeUtilsTestCase(unittest.TestCase):
         self.assertEqual(params["keyword"], "guide")
         self.assertEqual(params["status"], "available")
 
-    def test_internal_payload_preserves_dataset_defaults(self) -> None:
-        dataset_details = {
-            "provider": "vendor",
-            "retrieval_model_dict": {
-                "search_method": "hybrid_search",
+    def test_internal_payload_uses_only_explicit_overrides(self) -> None:
+        payload = build_retrieve_payload({"query": "dify", "top_k": 8})
+        self.assertEqual(payload["query"], "dify")
+        self.assertEqual(payload["retrieval_model"]["search_method"], "semantic_search")
+        self.assertFalse(payload["retrieval_model"]["reranking_enable"])
+        self.assertEqual(payload["retrieval_model"]["top_k"], 8)
+        self.assertNotIn("weights", payload["retrieval_model"])
+        self.assertNotIn("reranking_model", payload["retrieval_model"])
+
+    def test_internal_payload_promotes_to_hybrid_when_rerank_model_is_set(self) -> None:
+        payload = build_retrieve_payload(
+            {
+                "query": "dify",
                 "reranking_enable": True,
                 "reranking_mode": "reranking_model",
-                "reranking_model": {
-                    "reranking_provider_name": "cohere",
-                    "reranking_model_name": "rerank-v3.5",
-                },
-                "weights": {
-                    "weight_type": "customized",
-                    "vector_setting": {"vector_weight": 0.7},
-                    "keyword_setting": {"keyword_weight": 0.3},
-                },
-                "top_k": 5,
-                "score_threshold_enabled": False,
-                "score_threshold": None,
-            },
-        }
-        payload = build_retrieve_payload({"query": "dify", "top_k": 8}, dataset_details)
-        self.assertEqual(payload["query"], "dify")
+                "reranking_provider_name": "langgenius/xinference/xinference",
+                "reranking_model_name": "bge-reranker-large",
+            }
+        )
         self.assertEqual(payload["retrieval_model"]["search_method"], "hybrid_search")
         self.assertTrue(payload["retrieval_model"]["reranking_enable"])
-        self.assertEqual(payload["retrieval_model"]["top_k"], 8)
-
-    def test_external_payload_rejects_internal_only_overrides(self) -> None:
-        dataset_details = {
-            "provider": "external",
-            "external_retrieval_model": {
-                "top_k": 3,
-                "score_threshold_enabled": False,
-                "score_threshold": None,
-            },
-        }
-        with self.assertRaises(ValueError):
-            build_retrieve_payload(
-                {
-                    "query": "dify",
-                    "search_method": "semantic_search",
-                },
-                dataset_details,
-            )
+        self.assertEqual(payload["retrieval_model"]["reranking_mode"], "reranking_model")
+        self.assertEqual(
+            payload["retrieval_model"]["reranking_model"]["reranking_provider_name"],
+            "langgenius/xinference/xinference",
+        )
 
     def test_normalize_retrieval_response_maps_records(self) -> None:
         response = {
@@ -135,6 +118,32 @@ class DifyKnowledgeUtilsTestCase(unittest.TestCase):
         self.assertEqual(normalized["dataset_id"], "kb-1")
         self.assertEqual(normalized["count"], 1)
         self.assertEqual(normalized["result"][0]["title"], "guide.txt")
+
+    def test_normalize_retrieval_response_accepts_string_query_and_scalar_records(self) -> None:
+        response = {
+            "query": "What is Dify?",
+            "records": [
+                "Dify is an open-source LLM app platform.",
+                {
+                    "segment": {
+                        "position": 2,
+                        "content": "It includes workflow and knowledge tooling.",
+                        "keywords": "not-a-list",
+                    }
+                },
+            ],
+        }
+        normalized = normalize_retrieval_response(response, "kb-1")
+        self.assertEqual(normalized["query"], "What is Dify?")
+        self.assertEqual(normalized["count"], 2)
+        self.assertEqual(normalized["result"][0]["content"], "Dify is an open-source LLM app platform.")
+        self.assertEqual(normalized["result"][1]["keywords"], [])
+
+    def test_normalize_retrieval_response_accepts_scalar_response(self) -> None:
+        normalized = normalize_retrieval_response("temporary unavailable", "kb-1")
+        self.assertEqual(normalized["query"], "")
+        self.assertEqual(normalized["count"], 0)
+        self.assertEqual(normalized["result"], [])
 
     def test_normalize_dataset_list_response_maps_records(self) -> None:
         response = {
@@ -216,6 +225,20 @@ class DifyKnowledgeUtilsTestCase(unittest.TestCase):
         self.assertEqual(normalized["result"][0]["id"], "doc-1")
         self.assertEqual(normalized["result"][0]["display_status"], "available")
         self.assertEqual(normalized["result"][0]["data_source_detail"]["upload_file"]["name"], "guide.txt")
+
+    def test_format_error_response_handles_scalar_json_payload(self) -> None:
+        client = DifyKnowledgeClient(base_url="https://api.dify.ai", api_key="test-key")
+
+        class FakeResponse:
+            status_code = 500
+            text = "server error"
+
+            @staticmethod
+            def json() -> str:
+                return "temporary unavailable"
+
+        message = client._format_error_response(FakeResponse())
+        self.assertEqual(message, "HTTP 500: temporary unavailable")
 
 
 if __name__ == "__main__":

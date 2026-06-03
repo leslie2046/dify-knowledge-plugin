@@ -6,9 +6,9 @@ label:
   en_US: Dify Knowledge
   zh_Hans: Dify 知识库
 description:
-  en_US: List Dify knowledge bases, list documents, and retrieve chunks through the official Knowledge API.
-  zh_Hans: 通过 Dify 官方知识库 API 获取知识库列表、文档列表并检索知识库分段。
-icon: icon.svg
+  en_US: List Dify knowledge bases, list documents, or retrieve chunks through the official Knowledge API.
+  zh_Hans: 通过 Dify 官方知识库 API 获取知识库列表、文档列表或检索知识库分段。
+icon: icon.png
 resource:
   memory: 268435456
 plugins:

@@ -29,7 +29,7 @@ identity:
   description:
     en_US: List Dify knowledge bases, list documents, and retrieve knowledge chunks.
     zh_Hans: 获取 Dify 知识库列表、文档列表并检索分段内容。
-  icon: icon.svg
+  icon: icon.png
   tags:
     - rag
 tools:

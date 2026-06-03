@@ -101,10 +101,13 @@ class DifyKnowledgeClient:
 
         parts = [f"HTTP {response.status_code}"]
 
-        for key in ("message", "detail", "error", "code"):
-            value = payload.get(key)
-            if value:
-                parts.append(str(value))
+        if isinstance(payload, dict):
+            for key in ("message", "detail", "error", "code"):
+                value = payload.get(key)
+                if value:
+                    parts.append(str(value))
+        elif payload not in (None, ""):
+            parts.append(str(payload))
 
         if len(parts) == 1:
             text = response.text.strip()

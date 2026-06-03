@@ -13,7 +13,7 @@ parameters:
   - name: dataset_id
     type: string
     required: true
-    form: form
+    form: llm
     label:
       en_US: Dataset ID
       zh_Hans: 知识库 ID

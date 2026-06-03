@@ -10,6 +10,17 @@ description:
     zh_Hans: 检索 Dify 知识库并返回最相关的分段。
   llm: Search a Dify knowledge base and return the most relevant chunks.
 parameters:
+  - name: dataset_id
+    type: string
+    required: true
+    form: llm
+    label:
+      en_US: Dataset ID
+      zh_Hans: 知识库 ID
+    human_description:
+      en_US: Knowledge base id used for retrieval.
+      zh_Hans: 用于检索的知识库 ID。
+    llm_description: Required Dify knowledge base id used for retrieval.
   - name: query
     type: string
     required: true
@@ -21,17 +32,6 @@ parameters:
       en_US: Search query text.
       zh_Hans: 检索问题或关键词。
     llm_description: The search query text used to retrieve chunks from the Dify knowledge base.
-  - name: dataset_id
-    type: string
-    required: true
-    form: form
-    label:
-      en_US: Dataset ID
-      zh_Hans: 知识库 ID
-    human_description:
-      en_US: Knowledge base id used for retrieval.
-      zh_Hans: 用于检索的知识库 ID。
-    llm_description: Required Dify knowledge base id used for retrieval.
   - name: search_method
     type: select
     required: false
