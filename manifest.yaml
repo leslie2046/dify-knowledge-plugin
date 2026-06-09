@@ -1,4 +1,4 @@
-version: 0.0.1
+version: 0.0.2
 type: plugin
 author: leslie2046
 name: dify_knowledge
@@ -6,16 +6,16 @@ label:
   en_US: Dify Knowledge
   zh_Hans: Dify 知识库
 description:
-  en_US: List Dify knowledge bases, list documents, or retrieve chunks through the official Knowledge API.
-  zh_Hans: 通过 Dify 官方知识库 API 获取知识库列表、文档列表或检索知识库分段。
-icon: icon.png
+  en_US: List Dify knowledge bases and documents, retrieve chunks, and inspect available models through the official Knowledge API.
+  zh_Hans: 通过 Dify 官方知识库 API 获取知识库和文档列表、检索知识库分段，并查询可用模型。
+icon: icon-small.png
 resource:
   memory: 268435456
 plugins:
   tools:
     - provider/dify_knowledge.yaml
 meta:
-  version: 0.0.1
+  version: 0.0.2
   arch:
     - amd64
     - arm64

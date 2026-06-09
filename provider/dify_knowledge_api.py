@@ -60,6 +60,9 @@ class DifyKnowledgeClient:
     def retrieve_chunks(self, dataset_id: str, payload: dict[str, Any]) -> dict[str, Any]:
         return self._request("POST", f"/datasets/{dataset_id}/retrieve", json_body=payload)
 
+    def list_available_models(self, model_type: str) -> dict[str, Any]:
+        return self._request("GET", f"/workspaces/current/models/model-types/{model_type}")
+
     def _request(
         self,
         method: str,

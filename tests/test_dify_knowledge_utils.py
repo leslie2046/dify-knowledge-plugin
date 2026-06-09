@@ -2,9 +2,11 @@ import unittest
 
 from provider.dify_knowledge_api import DifyKnowledgeClient
 from provider.dify_knowledge_utils import (
+    build_list_available_models_params,
     build_list_documents_params,
     build_list_datasets_params,
     build_retrieve_payload,
+    normalize_available_models_response,
     normalize_base_url,
     normalize_dataset_list_response,
     normalize_document_list_response,
@@ -56,6 +58,14 @@ class DifyKnowledgeUtilsTestCase(unittest.TestCase):
         self.assertEqual(params["limit"], 15)
         self.assertEqual(params["keyword"], "guide")
         self.assertEqual(params["status"], "available")
+
+    def test_build_list_available_models_params_supports_aliases(self) -> None:
+        params = build_list_available_models_params({"model_type": "text_embedding"})
+        self.assertEqual(params["model_type"], "text-embedding")
+
+    def test_build_list_available_models_params_requires_supported_type(self) -> None:
+        with self.assertRaises(ValueError):
+            build_list_available_models_params({"model_type": "image"})
 
     def test_internal_payload_uses_only_explicit_overrides(self) -> None:
         payload = build_retrieve_payload({"query": "dify", "top_k": 8})
@@ -225,6 +235,40 @@ class DifyKnowledgeUtilsTestCase(unittest.TestCase):
         self.assertEqual(normalized["result"][0]["id"], "doc-1")
         self.assertEqual(normalized["result"][0]["display_status"], "available")
         self.assertEqual(normalized["result"][0]["data_source_detail"]["upload_file"]["name"], "guide.txt")
+
+    def test_normalize_available_models_response_maps_providers_and_models(self) -> None:
+        response = {
+            "data": [
+                {
+                    "provider": "openai",
+                    "label": {"en_US": "OpenAI", "zh_Hans": "OpenAI"},
+                    "icon_small": {"en_US": "https://example.com/openai-small.svg"},
+                    "icon_large": {"en_US": "https://example.com/openai-large.svg"},
+                    "status": "active",
+                    "models": [
+                        {
+                            "model": "text-embedding-3-small",
+                            "label": {
+                                "en_US": "text-embedding-3-small",
+                                "zh_Hans": "text-embedding-3-small",
+                            },
+                            "model_type": "text-embedding",
+                            "features": None,
+                            "fetch_from": "predefined-model",
+                            "model_properties": {"context_size": 8191},
+                            "status": "active",
+                        }
+                    ],
+                }
+            ]
+        }
+        normalized = normalize_available_models_response(response, "text-embedding")
+        self.assertEqual(normalized["model_type"], "text-embedding")
+        self.assertEqual(normalized["provider_count"], 1)
+        self.assertEqual(normalized["model_count"], 1)
+        self.assertEqual(normalized["result"][0]["provider"], "openai")
+        self.assertEqual(normalized["result"][0]["model_count"], 1)
+        self.assertEqual(normalized["result"][0]["models"][0]["features"], [])
 
     def test_format_error_response_handles_scalar_json_payload(self) -> None:
         client = DifyKnowledgeClient(base_url="https://api.dify.ai", api_key="test-key")

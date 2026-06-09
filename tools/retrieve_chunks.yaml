@@ -6,9 +6,9 @@ identity:
     zh_Hans: 检索分段
 description:
   human:
-    en_US: Search a Dify knowledge base and return the most relevant chunks.
-    zh_Hans: 检索 Dify 知识库并返回最相关的分段。
-  llm: Search a Dify knowledge base and return the most relevant chunks.
+    en_US: Search a Dify knowledge base and return the most relevant chunks. Optional retrieval parameters only affect the current request and are not saved to the knowledge base. Empty optional parameters use the retrieval settings saved in the knowledge base.
+    zh_Hans: 检索 Dify 知识库并返回最相关的分段。可选检索参数仅对本次请求生效，不会保存到知识库；可选参数留空时会使用知识库中保存的检索配置。
+  llm: Search a Dify knowledge base and return the most relevant chunks. Optional retrieval parameters only affect this request and are not saved to the knowledge base. Empty optional parameters use the retrieval settings saved in the knowledge base.
 parameters:
   - name: dataset_id
     type: string
@@ -136,9 +136,9 @@ parameters:
       en_US: Reranking Provider
       zh_Hans: 重排模型 Provider
     human_description:
-      en_US: Required when reranking mode is reranking_model.
-      zh_Hans: 当重排模式为 reranking_model 时必填。
-    llm_description: Reranking model provider name, required when reranking mode is reranking_model.
+      en_US: Required when reranking mode is reranking_model. Available values can be checked with list_available_models using model_type=rerank.
+      zh_Hans: 当重排模式为 reranking_model 时必填。可选值可通过 list_available_models 且 model_type=rerank 获取。
+    llm_description: Reranking model provider name, required when reranking mode is reranking_model. Use list_available_models with model_type=rerank to inspect available values.
   - name: reranking_model_name
     type: string
     required: false
@@ -147,9 +147,9 @@ parameters:
       en_US: Reranking Model
       zh_Hans: 重排模型名称
     human_description:
-      en_US: Required when reranking mode is reranking_model.
-      zh_Hans: 当重排模式为 reranking_model 时必填。
-    llm_description: Reranking model name, required when reranking mode is reranking_model.
+      en_US: Required when reranking mode is reranking_model. Available values can be checked with list_available_models using model_type=rerank.
+      zh_Hans: 当重排模式为 reranking_model 时必填。可选值可通过 list_available_models 且 model_type=rerank 获取。
+    llm_description: Reranking model name, required when reranking mode is reranking_model. Use list_available_models with model_type=rerank to inspect available values.
   - name: weight_type
     type: select
     required: false

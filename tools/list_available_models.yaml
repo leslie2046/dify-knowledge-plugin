@@ -1,0 +1,68 @@
+identity:
+  name: list_available_models
+  author: leslie2046
+  label:
+    en_US: List Available Models
+    zh_Hans: 获取可用模型
+description:
+  human:
+    en_US: List the available Dify models for a given model type. Useful for checking text-embedding and rerank models before configuring a knowledge base.
+    zh_Hans: 按模型类型获取 Dify 可用模型列表。适合在配置知识库前查询 text-embedding 和 rerank 模型。
+  llm: List the available Dify models for a given model type.
+parameters:
+  - name: model_type
+    type: select
+    required: true
+    form: llm
+    label:
+      en_US: Model Type
+      zh_Hans: 模型类型
+    human_description:
+      en_US: Model type to query, such as text-embedding or rerank.
+      zh_Hans: 要查询的模型类型，例如 text-embedding 或 rerank。
+    llm_description: Required model type to query. Use text-embedding for embedding models or rerank for reranking models in knowledge-base configuration.
+    options:
+      - value: text-embedding
+        label:
+          en_US: Text Embedding
+          zh_Hans: 文本嵌入
+      - value: rerank
+        label:
+          en_US: Rerank
+          zh_Hans: 重排序
+      - value: llm
+        label:
+          en_US: LLM
+          zh_Hans: 大语言模型
+      - value: tts
+        label:
+          en_US: TTS
+          zh_Hans: 语音合成
+      - value: speech2text
+        label:
+          en_US: Speech to Text
+          zh_Hans: 语音转文本
+      - value: moderation
+        label:
+          en_US: Moderation
+          zh_Hans: 内容审核
+output_schema:
+  type: object
+  properties:
+    model_type:
+      type: string
+      description: The queried model type.
+    provider_count:
+      type: integer
+      description: Number of returned providers.
+    model_count:
+      type: integer
+      description: Total number of returned models across all providers.
+    result:
+      type: array
+      description: Providers with their normalized model lists.
+      items:
+        type: object
+extra:
+  python:
+    source: tools/list_available_models.py

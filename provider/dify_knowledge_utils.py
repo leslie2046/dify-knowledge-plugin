@@ -22,6 +22,23 @@ INTERNAL_RETRIEVAL_OVERRIDE_FIELDS = INTERNAL_ONLY_OVERRIDE_FIELDS | {
     "score_threshold",
 }
 
+SUPPORTED_MODEL_TYPES = {
+    "text-embedding",
+    "rerank",
+    "llm",
+    "tts",
+    "speech2text",
+    "moderation",
+}
+
+MODEL_TYPE_ALIASES = {
+    "embedding": "text-embedding",
+    "text_embedding": "text-embedding",
+    "textembedding": "text-embedding",
+    "speech-to-text": "speech2text",
+    "speech_to_text": "speech2text",
+}
+
 
 def normalize_base_url(base_url: str) -> str:
     value = base_url.strip().rstrip("/")
@@ -112,6 +129,10 @@ def build_list_documents_params(tool_parameters: Mapping[str, Any]) -> dict[str,
         params["status"] = status
 
     return params
+
+
+def build_list_available_models_params(tool_parameters: Mapping[str, Any]) -> dict[str, str]:
+    return {"model_type": select_model_type(tool_parameters)}
 
 
 def build_retrieve_payload(tool_parameters: Mapping[str, Any]) -> dict[str, Any]:
@@ -338,8 +359,65 @@ def normalize_document_list_response(response_data: Any, dataset_id: str) -> dic
     }
 
 
+def normalize_available_models_response(response_data: Any, model_type: str) -> dict[str, Any]:
+    response_mapping = _as_mapping(response_data)
+    normalized_providers: list[dict[str, Any]] = []
+    model_count = 0
+
+    for provider in _as_list(response_mapping.get("data")):
+        provider_mapping = _as_mapping(provider)
+        normalized_models: list[dict[str, Any]] = []
+
+        for model in _as_list(provider_mapping.get("models")):
+            model_mapping = _as_mapping(model)
+            normalized_models.append(
+                {
+                    "model": model_mapping.get("model"),
+                    "label": _copy_mapping(model_mapping.get("label")),
+                    "model_type": model_mapping.get("model_type") or model_type,
+                    "features": _as_list(model_mapping.get("features")),
+                    "fetch_from": model_mapping.get("fetch_from"),
+                    "model_properties": _copy_mapping(model_mapping.get("model_properties")),
+                    "status": model_mapping.get("status"),
+                }
+            )
+
+        model_count += len(normalized_models)
+        normalized_providers.append(
+            {
+                "provider": provider_mapping.get("provider"),
+                "label": _copy_mapping(provider_mapping.get("label")),
+                "icon_small": _copy_mapping(provider_mapping.get("icon_small")),
+                "icon_large": _copy_mapping(provider_mapping.get("icon_large")),
+                "status": provider_mapping.get("status"),
+                "model_count": len(normalized_models),
+                "models": normalized_models,
+            }
+        )
+
+    return {
+        "model_type": model_type,
+        "provider_count": len(normalized_providers),
+        "model_count": model_count,
+        "result": normalized_providers,
+    }
+
+
 def has_requested_overrides(tool_parameters: Mapping[str, Any], keys: set[str]) -> bool:
     return any(key in tool_parameters and _has_non_empty_value(tool_parameters.get(key)) for key in keys)
+
+
+def select_model_type(tool_parameters: Mapping[str, Any]) -> str:
+    raw_model_type = _clean_string(tool_parameters.get("model_type")).lower()
+    if not raw_model_type:
+        raise ValueError("model_type is required")
+
+    model_type = MODEL_TYPE_ALIASES.get(raw_model_type, raw_model_type)
+    if model_type not in SUPPORTED_MODEL_TYPES:
+        allowed_values = ", ".join(sorted(SUPPORTED_MODEL_TYPES))
+        raise ValueError(f"model_type must be one of: {allowed_values}")
+
+    return model_type
 
 
 def _clean_string(value: Any) -> str:

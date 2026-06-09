@@ -27,14 +27,15 @@ identity:
     en_US: Dify Knowledge
     zh_Hans: Dify 知识库
   description:
-    en_US: List Dify knowledge bases, list documents, and retrieve knowledge chunks.
-    zh_Hans: 获取 Dify 知识库列表、文档列表并检索分段内容。
-  icon: icon.png
+    en_US: List Dify knowledge bases and documents, retrieve chunks, and inspect available models for knowledge-base configuration.
+    zh_Hans: 获取 Dify 知识库和文档列表、检索分段内容，并查询知识库配置可用模型。
+  icon: icon-small.png
   tags:
     - rag
 tools:
   - tools/list_datasets.yaml
   - tools/list_documents.yaml
+  - tools/list_available_models.yaml
   - tools/retrieve_chunks.yaml
 extra:
   python:
