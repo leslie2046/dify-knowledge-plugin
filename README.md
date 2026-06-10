@@ -2,8 +2,6 @@
 
 Tool plugin for the Dify Knowledge API. It lets you inspect knowledge bases, inspect documents, retrieve chunks, and query the available models used for knowledge-base configuration.
 
-中文说明见 [readme/README_zh_Hans.md](readme/README_zh_Hans.md)。
-
 ## Features
 
 - `list_datasets`: list knowledge bases with optional keyword, pagination, permission, and tag filters.
