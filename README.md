@@ -2,6 +2,9 @@
 
 Tool plugin for the Dify Knowledge API. It lets you inspect knowledge bases, inspect documents, retrieve chunks, and query the available models used for knowledge-base configuration.
 
+author: leslie2046
+repo: [leslie2046/dify-knowledge-plugin](https://github.com/leslie2046/dify-knowledge-plugin)
+
 ## Features
 
 - `list_datasets`: list knowledge bases with optional keyword, pagination, permission, and tag filters.

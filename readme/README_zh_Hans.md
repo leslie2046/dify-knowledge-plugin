@@ -2,6 +2,9 @@
 
 这是一个面向 Dify Knowledge API 的工具插件，用于查看知识库、查看文档、检索分段内容，以及查询知识库配置可用模型。
 
+author: leslie2046
+repo: [leslie2046/dify-knowledge-plugin](https://github.com/leslie2046/dify-knowledge-plugin)
+
 ## 功能
 
 - `list_datasets`：获取知识库列表，支持关键词、分页、权限范围和标签筛选。
