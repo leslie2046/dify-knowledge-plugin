@@ -2,7 +2,8 @@
 
 这是一个面向 Dify Knowledge API 的工具插件，用于查看和检索知识库、读取文档分段、写入文本知识、查询索引状态，以及获取元数据、标签和可用模型。
 
-author: leslie2046
+version: 0.1.0
+author: [leslie2046](https://github.com/leslie2046)
 repo: [leslie2046/dify-knowledge-plugin](https://github.com/leslie2046/dify-knowledge-plugin)
 
 ## 功能
