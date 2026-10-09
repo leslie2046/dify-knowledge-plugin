@@ -1,0 +1,132 @@
+identity:
+  name: update_document_by_text
+  author: leslie2046
+  label:
+    en_US: Update Document by Text
+    zh_Hans: 更新文本知识文档
+description:
+  human:
+    en_US: Update a specific document. This writes changes and may trigger reindexing.
+      Use the returned batch with get_indexing_status.
+    zh_Hans: 更新指定文档，会写入修改且可能触发重新索引。使用返回的 batch 查询索引状态。
+  llm: Update a specific document. This writes changes and may trigger reindexing.
+    Use the returned batch with get_indexing_status.
+parameters:
+- name: dataset_id
+  type: string
+  required: true
+  form: llm
+  label:
+    en_US: Dataset ID
+    zh_Hans: 知识库 ID
+  human_description:
+    en_US: Knowledge base ID from list_datasets.
+    zh_Hans: 知识库 ID，可通过 list_datasets 获取。
+  llm_description: Knowledge base ID from list_datasets.
+- name: document_id
+  type: string
+  required: true
+  form: llm
+  label:
+    en_US: Document ID
+    zh_Hans: 文档 ID
+  human_description:
+    en_US: Existing document ID from list_documents.
+    zh_Hans: 已有文档 ID，可通过 list_documents 获取。
+  llm_description: Existing document ID from list_documents.
+- name: name
+  type: string
+  required: false
+  form: llm
+  label:
+    en_US: Document Name
+    zh_Hans: 文档名称
+  human_description:
+    en_US: Document name; required when supplying text.
+    zh_Hans: 文档名称；提供正文时必填。
+  llm_description: Document name; required when supplying text.
+- name: text
+  type: string
+  required: false
+  form: llm
+  label:
+    en_US: Text
+    zh_Hans: 文本正文
+  human_description:
+    en_US: Document text to write.
+    zh_Hans: 要写入的文档正文。
+  llm_description: Document text to write.
+- name: doc_form
+  type: select
+  required: false
+  form: llm
+  label:
+    en_US: Chunking Mode
+    zh_Hans: 分段模式
+  human_description:
+    en_US: Optional chunking mode. Parent-child mode requires a hierarchical process_rule.
+    zh_Hans: 可选分段模式；父子模式需要 hierarchical 处理规则。
+  llm_description: Optional chunking mode. Parent-child mode requires a hierarchical
+    process_rule.
+  options:
+  - value: text_model
+    label:
+      en_US: text_model
+      zh_Hans: text_model
+  - value: hierarchical_model
+    label:
+      en_US: hierarchical_model
+      zh_Hans: hierarchical_model
+  - value: qa_model
+    label:
+      en_US: qa_model
+      zh_Hans: qa_model
+- name: doc_language
+  type: string
+  required: false
+  form: llm
+  label:
+    en_US: Document Language
+    zh_Hans: 文档语言
+  human_description:
+    en_US: Optional processing language.
+    zh_Hans: 可选，文档处理语言。
+  llm_description: Optional processing language.
+- name: process_rule
+  type: string
+  required: false
+  form: llm
+  label:
+    en_US: Process Rule JSON
+    zh_Hans: 处理规则 JSON
+  human_description:
+    en_US: JSON object for processing rules. Creates default to automatic; updates
+      omit this field to preserve current rules.
+    zh_Hans: 处理规则 JSON 对象。创建默认自动处理；更新时留空以保留现有规则。
+  llm_description: JSON object for processing rules. Creates default to automatic;
+    updates omit this field to preserve current rules.
+- name: retrieval_model
+  type: string
+  required: false
+  form: llm
+  label:
+    en_US: Retrieval Model JSON
+    zh_Hans: 检索配置 JSON
+  human_description:
+    en_US: Optional complete retrieval model JSON object.
+    zh_Hans: 可选完整检索配置 JSON 对象。
+  llm_description: Optional complete retrieval model JSON object.
+output_schema:
+  type: object
+  properties:
+    dataset_id:
+      type: string
+    document_id:
+      type: string
+    batch:
+      type: string
+    result:
+      type: object
+extra:
+  python:
+    source: tools/update_document_by_text.py

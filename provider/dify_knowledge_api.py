@@ -63,6 +63,41 @@ class DifyKnowledgeClient:
     def list_available_models(self, model_type: str) -> dict[str, Any]:
         return self._request("GET", f"/workspaces/current/models/model-types/{model_type}")
 
+    def list_segments(
+        self,
+        dataset_id: str,
+        document_id: str,
+        *,
+        page: int = 1,
+        limit: int = 20,
+        keyword: str | None = None,
+        status: list[str] | None = None,
+    ) -> dict[str, Any]:
+        params: dict[str, Any] = {"page": page, "limit": limit}
+        if keyword:
+            params["keyword"] = keyword
+        if status:
+            params["status"] = status
+        return self._request("GET", f"/datasets/{dataset_id}/documents/{document_id}/segments", params=params)
+
+    def get_segment(self, dataset_id: str, document_id: str, segment_id: str) -> dict[str, Any]:
+        return self._request("GET", f"/datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}")
+
+    def list_metadata_fields(self, dataset_id: str) -> dict[str, Any]:
+        return self._request("GET", f"/datasets/{dataset_id}/metadata")
+
+    def list_tags(self) -> Any:
+        return self._request("GET", "/datasets/tags")
+
+    def create_document_by_text(self, dataset_id: str, payload: dict[str, Any]) -> dict[str, Any]:
+        return self._request("POST", f"/datasets/{dataset_id}/document/create-by-text", json_body=payload)
+
+    def update_document_by_text(self, dataset_id: str, document_id: str, payload: dict[str, Any]) -> dict[str, Any]:
+        return self._request("POST", f"/datasets/{dataset_id}/documents/{document_id}/update-by-text", json_body=payload)
+
+    def get_indexing_status(self, dataset_id: str, batch: str) -> dict[str, Any]:
+        return self._request("GET", f"/datasets/{dataset_id}/documents/{batch}/indexing-status")
+
     def _request(
         self,
         method: str,

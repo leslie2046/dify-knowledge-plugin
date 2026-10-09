@@ -12,6 +12,10 @@ class DifyKnowledgeProvider(ToolProvider):
             base_url = str(credentials.get("base_url") or "").strip()
             api_key = str(credentials.get("api_key") or "").strip()
             client = DifyKnowledgeClient(base_url=base_url, api_key=api_key)
-            client.list_datasets(limit=1)
+            validation_dataset_id = str(credentials.get("validation_dataset_id") or "").strip()
+            if validation_dataset_id:
+                client.get_dataset(validation_dataset_id)
+            else:
+                client.list_datasets(limit=1)
         except Exception as exc:
             raise ToolProviderCredentialValidationError(str(exc)) from exc

@@ -1,0 +1,150 @@
+identity:
+  name: list_segments
+  author: leslie2046
+  label:
+    en_US: List Document Segments
+    zh_Hans: 获取文档分段列表
+description:
+  human:
+    en_US: Read a document's segments with pagination and optional keyword or indexing-status
+      filters. For a full document, leave filters empty and follow has_more through
+      subsequent pages.
+    zh_Hans: 分页读取文档分段，支持关键词和索引状态筛选。读取整篇文档时请留空筛选条件，并根据 has_more 继续读取后续页。
+  llm: Read a document's segments with pagination and optional keyword or indexing-status
+    filters. For a full document, leave filters empty and follow has_more through
+    subsequent pages.
+parameters:
+- name: dataset_id
+  type: string
+  required: true
+  form: llm
+  label:
+    en_US: Dataset ID
+    zh_Hans: 知识库 ID
+  human_description:
+    en_US: Knowledge base ID. Obtain it from list_datasets.
+    zh_Hans: 知识库 ID，可通过 list_datasets 获取。
+  llm_description: Knowledge base ID. Obtain it from list_datasets.
+- name: document_id
+  type: string
+  required: true
+  form: llm
+  label:
+    en_US: Document ID
+    zh_Hans: 文档 ID
+  human_description:
+    en_US: Document ID. Obtain it from list_documents or retrieve_chunks.
+    zh_Hans: 文档 ID，可通过 list_documents 或 retrieve_chunks 获取。
+  llm_description: Document ID. Obtain it from list_documents or retrieve_chunks.
+- name: keyword
+  type: string
+  required: false
+  form: llm
+  label:
+    en_US: Keyword
+    zh_Hans: 关键词
+  human_description:
+    en_US: Optional keyword to filter segment content.
+    zh_Hans: 可选，用于筛选分段内容的关键词。
+  llm_description: Optional keyword to filter segment content.
+- name: status
+  type: string
+  required: false
+  form: llm
+  label:
+    en_US: Indexing Statuses
+    zh_Hans: 索引状态列表
+  human_description:
+    en_US: Optional indexing statuses, as comma-separated values or a JSON array string,
+      e.g. completed,indexing,error. This is not document display status.
+    zh_Hans: 可选，索引状态列表，支持逗号分隔或 JSON 数组字符串，例如 completed,indexing,error；不是文档显示状态。
+  llm_description: Optional indexing statuses, as comma-separated values or a JSON
+    array string, e.g. completed,indexing,error. This is not document display status.
+- name: page
+  type: number
+  required: false
+  form: llm
+  label:
+    en_US: Page
+    zh_Hans: 页码
+  human_description:
+    en_US: Page number to read.
+    zh_Hans: 要读取的页码。
+  llm_description: Page number to read.
+  default: 1
+  min: 1
+- name: limit
+  type: number
+  required: false
+  form: llm
+  label:
+    en_US: Limit
+    zh_Hans: 每页数量
+  human_description:
+    en_US: Segments per page (1-100).
+    zh_Hans: 每页分段数量（1-100）。
+  llm_description: Segments per page (1-100).
+  default: 20
+  min: 1
+  max: 100
+output_schema:
+  type: object
+  properties:
+    dataset_id:
+      type: string
+    document_id:
+      type: string
+    doc_form:
+      type: string
+    page:
+      type: integer
+    limit:
+      type: integer
+    total:
+      type: integer
+    count:
+      type: integer
+    has_more:
+      type: boolean
+    result:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: string
+          segment_id:
+            type: string
+          dataset_id:
+            type: string
+          document_id:
+            type: string
+          position:
+            type: integer
+          content:
+            type: string
+          answer:
+            type: string
+          status:
+            type: string
+          enabled:
+            type: boolean
+          word_count:
+            type: integer
+          tokens:
+            type: integer
+          keywords:
+            type: array
+            items:
+              type: string
+          attachments:
+            type: array
+            items:
+              type: object
+          child_chunks:
+            type: array
+            items:
+              type: object
+extra:
+  python:
+    source: tools/list_segments.py

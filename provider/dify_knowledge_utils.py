@@ -135,6 +135,80 @@ def build_list_available_models_params(tool_parameters: Mapping[str, Any]) -> di
     return {"model_type": select_model_type(tool_parameters)}
 
 
+def select_document_id(tool_parameters: Mapping[str, Any]) -> str:
+    document_id = _clean_string(tool_parameters.get("document_id"))
+    if not document_id:
+        raise ValueError("document_id is required")
+    return document_id
+
+
+def select_segment_id(tool_parameters: Mapping[str, Any]) -> str:
+    segment_id = _clean_string(tool_parameters.get("segment_id"))
+    if not segment_id:
+        raise ValueError("segment_id is required")
+    return segment_id
+
+
+def build_list_segments_params(tool_parameters: Mapping[str, Any]) -> dict[str, Any]:
+    params: dict[str, Any] = {}
+    for key, default, maximum in (("page", 1, None), ("limit", 20, 100)):
+        value = tool_parameters.get(key)
+        if value is None or value == "":
+            number = default
+        else:
+            try:
+                numeric = float(value)
+                number = int(numeric)
+            except (TypeError, ValueError, OverflowError) as exc:
+                raise ValueError(f"{key} must be a positive integer") from exc
+            if isinstance(value, bool) or numeric != number:
+                raise ValueError(f"{key} must be a positive integer")
+        if number < 1 or (maximum is not None and number > maximum):
+            raise ValueError(f"{key} must be between 1 and {maximum}" if maximum else f"{key} must be at least 1")
+        params[key] = number
+    keyword = _clean_string(tool_parameters.get("keyword"))
+    if keyword:
+        params["keyword"] = keyword
+    status = parse_string_list(tool_parameters.get("status"))
+    if status:
+        params["status"] = status
+    return params
+
+
+def _normalize_segment(segment: Any, dataset_id: str, document_id: str) -> dict[str, Any]:
+    normalized = _copy_mapping(segment)
+    normalized.update({"dataset_id": dataset_id, "document_id": document_id, "segment_id": normalized.get("id")})
+    for key in ("keywords", "attachments", "child_chunks"):
+        normalized[key] = _as_list(normalized.get(key))
+    return normalized
+
+
+def normalize_segment_list_response(response_data: Any, dataset_id: str, document_id: str) -> dict[str, Any]:
+    response = _as_mapping(response_data)
+    segments = [_normalize_segment(segment, dataset_id, document_id) for segment in _as_list(response.get("data"))]
+    return {
+        "dataset_id": dataset_id,
+        "document_id": document_id,
+        "doc_form": response.get("doc_form"),
+        "page": response.get("page"),
+        "limit": response.get("limit"),
+        "total": response.get("total"),
+        "has_more": response.get("has_more"),
+        "count": len(segments),
+        "result": segments,
+    }
+
+
+def normalize_segment_response(response_data: Any, dataset_id: str, document_id: str) -> dict[str, Any]:
+    response = _as_mapping(response_data)
+    return {
+        "dataset_id": dataset_id,
+        "document_id": document_id,
+        "doc_form": response.get("doc_form"),
+        "result": _normalize_segment(response.get("data"), dataset_id, document_id),
+    }
+
+
 def build_retrieve_payload(tool_parameters: Mapping[str, Any]) -> dict[str, Any]:
     query = str(tool_parameters.get("query") or "").strip()
     if not query:

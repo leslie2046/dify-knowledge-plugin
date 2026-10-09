@@ -1,0 +1,41 @@
+identity:
+  name: list_metadata_fields
+  author: leslie2046
+  label:
+    en_US: List Metadata Fields
+    zh_Hans: 获取元数据字段
+description:
+  human:
+    en_US: List metadata fields and whether built-in fields are enabled. Use field
+      names for metadata filtering.
+    zh_Hans: 查询元数据字段及内置字段启用状态，用字段名构建检索过滤条件。
+  llm: List metadata fields and whether built-in fields are enabled. Use field names
+    for metadata filtering.
+parameters:
+- name: dataset_id
+  type: string
+  required: true
+  form: llm
+  label:
+    en_US: Dataset ID
+    zh_Hans: 知识库 ID
+  human_description:
+    en_US: Knowledge base ID from list_datasets.
+    zh_Hans: 知识库 ID，可通过 list_datasets 获取。
+  llm_description: Knowledge base ID from list_datasets.
+output_schema:
+  type: object
+  properties:
+    dataset_id:
+      type: string
+    built_in_field_enabled:
+      type: boolean
+    count:
+      type: integer
+    result:
+      type: array
+      items:
+        type: object
+extra:
+  python:
+    source: tools/list_metadata_fields.py

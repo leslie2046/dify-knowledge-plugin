@@ -1,0 +1,166 @@
+identity:
+  name: create_document_by_text
+  author: leslie2046
+  label:
+    en_US: Create Document by Text
+    zh_Hans: 创建文本知识文档
+description:
+  human:
+    en_US: Create a document from text. This writes to the knowledge base and returns
+      a batch for get_indexing_status; successful creation does not mean indexing
+      is complete.
+    zh_Hans: 通过文本创建知识文档，会写入知识库。返回 batch，可通过 get_indexing_status 查询索引进度；创建成功不代表已可检索。
+  llm: Create a document from text. This writes to the knowledge base and returns
+    a batch for get_indexing_status; successful creation does not mean indexing is
+    complete.
+parameters:
+- name: dataset_id
+  type: string
+  required: true
+  form: llm
+  label:
+    en_US: Dataset ID
+    zh_Hans: 知识库 ID
+  human_description:
+    en_US: Knowledge base ID from list_datasets.
+    zh_Hans: 知识库 ID，可通过 list_datasets 获取。
+  llm_description: Knowledge base ID from list_datasets.
+- name: name
+  type: string
+  required: true
+  form: llm
+  label:
+    en_US: Document Name
+    zh_Hans: 文档名称
+  human_description:
+    en_US: Document name; required when supplying text.
+    zh_Hans: 文档名称；提供正文时必填。
+  llm_description: Document name; required when supplying text.
+- name: text
+  type: string
+  required: true
+  form: llm
+  label:
+    en_US: Text
+    zh_Hans: 文本正文
+  human_description:
+    en_US: Document text to write.
+    zh_Hans: 要写入的文档正文。
+  llm_description: Document text to write.
+- name: doc_form
+  type: select
+  required: false
+  form: llm
+  label:
+    en_US: Chunking Mode
+    zh_Hans: 分段模式
+  human_description:
+    en_US: Optional chunking mode. Parent-child mode requires a hierarchical process_rule.
+    zh_Hans: 可选分段模式；父子模式需要 hierarchical 处理规则。
+  llm_description: Optional chunking mode. Parent-child mode requires a hierarchical
+    process_rule.
+  options:
+  - value: text_model
+    label:
+      en_US: text_model
+      zh_Hans: text_model
+  - value: hierarchical_model
+    label:
+      en_US: hierarchical_model
+      zh_Hans: hierarchical_model
+  - value: qa_model
+    label:
+      en_US: qa_model
+      zh_Hans: qa_model
+- name: doc_language
+  type: string
+  required: false
+  form: llm
+  label:
+    en_US: Document Language
+    zh_Hans: 文档语言
+  human_description:
+    en_US: Optional processing language.
+    zh_Hans: 可选，文档处理语言。
+  llm_description: Optional processing language.
+- name: process_rule
+  type: string
+  required: false
+  form: llm
+  label:
+    en_US: Process Rule JSON
+    zh_Hans: 处理规则 JSON
+  human_description:
+    en_US: JSON object for processing rules. Creates default to automatic; updates
+      omit this field to preserve current rules.
+    zh_Hans: 处理规则 JSON 对象。创建默认自动处理；更新时留空以保留现有规则。
+  llm_description: JSON object for processing rules. Creates default to automatic;
+    updates omit this field to preserve current rules.
+- name: retrieval_model
+  type: string
+  required: false
+  form: llm
+  label:
+    en_US: Retrieval Model JSON
+    zh_Hans: 检索配置 JSON
+  human_description:
+    en_US: Optional complete retrieval model JSON object.
+    zh_Hans: 可选完整检索配置 JSON 对象。
+  llm_description: Optional complete retrieval model JSON object.
+- name: indexing_technique
+  type: select
+  required: false
+  form: llm
+  label:
+    en_US: Indexing Technique
+    zh_Hans: 索引方式
+  human_description:
+    en_US: Required for the first document if the knowledge base has no indexing technique.
+    zh_Hans: 知识库未配置索引方式时，首篇文档需要指定。
+  llm_description: Required for the first document if the knowledge base has no indexing
+    technique.
+  options:
+  - value: high_quality
+    label:
+      en_US: high_quality
+      zh_Hans: high_quality
+  - value: economy
+    label:
+      en_US: economy
+      zh_Hans: economy
+- name: embedding_model
+  type: string
+  required: false
+  form: llm
+  label:
+    en_US: Embedding Model
+    zh_Hans: 嵌入模型
+  human_description:
+    en_US: Optional embedding model name from list_available_models.
+    zh_Hans: 可选嵌入模型名，可通过 list_available_models 查询。
+  llm_description: Optional embedding model name from list_available_models.
+- name: embedding_model_provider
+  type: string
+  required: false
+  form: llm
+  label:
+    en_US: Embedding Provider
+    zh_Hans: 嵌入模型 Provider
+  human_description:
+    en_US: Optional embedding model provider from list_available_models.
+    zh_Hans: 可选嵌入模型 Provider，可通过 list_available_models 查询。
+  llm_description: Optional embedding model provider from list_available_models.
+output_schema:
+  type: object
+  properties:
+    dataset_id:
+      type: string
+    document_id:
+      type: string
+    batch:
+      type: string
+    result:
+      type: object
+extra:
+  python:
+    source: tools/create_document_by_text.py

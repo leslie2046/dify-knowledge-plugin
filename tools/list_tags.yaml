@@ -1,0 +1,26 @@
+identity:
+  name: list_tags
+  author: leslie2046
+  label:
+    en_US: List Knowledge Tags
+    zh_Hans: 获取知识库标签
+description:
+  human:
+    en_US: List workspace knowledge tags. Requires an API key with access to all knowledge
+      bases.
+    zh_Hans: 获取工作区知识库标签；需要可访问全部知识库的 API Key。
+  llm: List workspace knowledge tags. Requires an API key with access to all knowledge
+    bases.
+parameters: []
+output_schema:
+  type: object
+  properties:
+    count:
+      type: integer
+    result:
+      type: array
+      items:
+        type: object
+extra:
+  python:
+    source: tools/list_tags.py

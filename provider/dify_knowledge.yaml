@@ -7,7 +7,8 @@ credentials_for_provider:
       en_US: https://your-dify-host/v1
       zh_Hans: https://your-dify-host/v1
     help:
-      en_US: Dify Knowledge API base URL. The plugin also accepts a host URL and appends /v1 automatically.
+      en_US: Dify Knowledge API base URL. The plugin also accepts a host URL and appends
+        /v1 automatically.
       zh_Hans: Dify Knowledge API 地址。也可以只填主机地址，插件会自动补上 /v1。
     required: true
     type: text-input
@@ -20,6 +21,16 @@ credentials_for_provider:
       zh_Hans: 请输入 Dify Service API Key
     required: true
     type: secret-input
+  validation_dataset_id:
+    label:
+      en_US: Validation Dataset ID
+      zh_Hans: 验证用知识库 ID
+    help:
+      en_US: Optional. For scoped keys, supply a dataset ID in the key scope to validate
+        access without listing all knowledge bases.
+      zh_Hans: 可选。限定范围的 API Key 请填写授权范围内的知识库 ID，用详情接口验证访问。
+    required: false
+    type: text-input
 identity:
   author: leslie2046
   name: dify_knowledge
@@ -27,16 +38,26 @@ identity:
     en_US: Dify Knowledge
     zh_Hans: Dify 知识库
   description:
-    en_US: List Dify knowledge bases and documents, retrieve chunks, and inspect available models for knowledge-base configuration.
-    zh_Hans: 获取 Dify 知识库和文档列表、检索分段内容，并查询知识库配置可用模型。
+    en_US: Inspect, search and maintain Dify knowledge bases, documents, segments,
+      metadata and models.
+    zh_Hans: 查看、检索和维护 Dify 知识库、文档、分段、元数据及模型配置。
   icon: icon-small.png
   tags:
-    - rag
+  - rag
 tools:
-  - tools/list_datasets.yaml
-  - tools/list_documents.yaml
-  - tools/list_available_models.yaml
-  - tools/retrieve_chunks.yaml
+- tools/list_datasets.yaml
+- tools/list_documents.yaml
+- tools/list_segments.yaml
+- tools/get_segment.yaml
+- tools/list_available_models.yaml
+- tools/retrieve_chunks.yaml
+- tools/get_dataset.yaml
+- tools/list_metadata_fields.yaml
+- tools/list_tags.yaml
+- tools/create_document_by_text.yaml
+- tools/update_document_by_text.yaml
+- tools/get_indexing_status.yaml
+- tools/retrieve_multiple.yaml
 extra:
   python:
     source: provider/dify_knowledge.py

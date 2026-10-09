@@ -1,0 +1,58 @@
+identity:
+  name: get_indexing_status
+  author: leslie2046
+  label:
+    en_US: Get Indexing Status
+    zh_Hans: 查询文档索引状态
+description:
+  human:
+    en_US: Query a create/update batch once. Poll from the workflow until finished;
+      completed means all documents succeeded, has_errors reports failures.
+    zh_Hans: 单次查询创建或更新批次。工作流可轮询至 finished；completed 表示全部成功，has_errors 表示存在失败。
+  llm: Query a create/update batch once. Poll from the workflow until finished; completed
+    means all documents succeeded, has_errors reports failures.
+parameters:
+- name: dataset_id
+  type: string
+  required: true
+  form: llm
+  label:
+    en_US: Dataset ID
+    zh_Hans: 知识库 ID
+  human_description:
+    en_US: Knowledge base ID from list_datasets.
+    zh_Hans: 知识库 ID，可通过 list_datasets 获取。
+  llm_description: Knowledge base ID from list_datasets.
+- name: batch
+  type: string
+  required: true
+  form: llm
+  label:
+    en_US: Batch ID
+    zh_Hans: 索引批次 ID
+  human_description:
+    en_US: Batch returned by document creation or update.
+    zh_Hans: 创建或更新文档时返回的 batch。
+  llm_description: Batch returned by document creation or update.
+output_schema:
+  type: object
+  properties:
+    dataset_id:
+      type: string
+    batch:
+      type: string
+    count:
+      type: integer
+    completed:
+      type: boolean
+    finished:
+      type: boolean
+    has_errors:
+      type: boolean
+    result:
+      type: array
+      items:
+        type: object
+extra:
+  python:
+    source: tools/get_indexing_status.py

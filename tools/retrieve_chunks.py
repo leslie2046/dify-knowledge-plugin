@@ -8,8 +8,8 @@ from dify_plugin.config.logger_format import plugin_logger_handler
 from dify_plugin.entities.tool import ToolInvokeMessage
 
 from provider.dify_knowledge_api import DifyKnowledgeClient
+from provider.knowledge_operations import retrieve_payload
 from provider.dify_knowledge_utils import (
-    build_retrieve_payload,
     normalize_retrieval_response,
     select_dataset_id,
 )
@@ -30,7 +30,7 @@ class RetrieveChunksTool(Tool):
                 api_key=str(credentials.get("api_key") or "").strip(),
             )
             dataset_id = select_dataset_id(tool_parameters=tool_parameters)
-            payload = build_retrieve_payload(tool_parameters=tool_parameters)
+            payload = retrieve_payload(client, dataset_id, tool_parameters)
             logger.info(
                 "Dify knowledge retrieve request dataset_id=%s payload=%s",
                 dataset_id,
