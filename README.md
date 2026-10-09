@@ -3,8 +3,11 @@
 Tool plugin for the Dify Knowledge API. Inspect and search knowledge bases, read document segments, write text documents, track indexing, and query metadata, tags and available models.
 
 version: 0.1.0
+
 author: [leslie2046](https://github.com/leslie2046)
+
 repo: [leslie2046/dify-knowledge-plugin](https://github.com/leslie2046/dify-knowledge-plugin)
+
 
 ## Features
 
